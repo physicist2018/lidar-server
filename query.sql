@@ -14,7 +14,7 @@ FROM Experiment
 WHERE ID = ?;
 
 -- name: GetAllExperiments :many
-SELECT * FROM Experiment;
+SELECT * FROM Experiment ORDER BY starttime;
 
 -- name: GetMeasurement :one
 SELECT * FROM Measurement
@@ -25,7 +25,7 @@ SELECT * FROM Measurement;
 
 -- name: GetAllMeasurementsForExpId :many
 SELECT * FROM Measurement
-WHERE experiment_id = ?;
+WHERE experiment_id = ? ORDER BY starttime;
 
 -- name: CreateMeasurement :one
 INSERT INTO Measurement(
@@ -37,3 +37,7 @@ RETURNING *;
 DELETE
 FROM Measurement
 WHERE ID = ?;
+
+-- name: GetFullMeasurementById :one
+-- объединяет измерения из разных каналов
+SELECT * FROM Measurement INNER JOIN
