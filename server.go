@@ -45,19 +45,26 @@ func run() error {
 	}
 
 	log.Println(res)
-	res11, err1 := queries.GetExperiment(ctx, 1)
+	res11, err1 := queries.GetExperimentById(ctx, 1) // get experiment by id
 	// list all authors
 	if err1 != nil {
 		return err
 	}
 	log.Println(res11)
-	res2, err := queries.GetAllExperiments(ctx)
+	res2, err := queries.GetAllExperiments(ctx) // get all experiments
 	if err != nil {
 		panic(err)
 	}
+
 	for _, v := range res2 {
 		log.Println(v.ID, v.Starttime, v.Title, v.Comments, v.Wavelen)
 	}
+
+	err = queries.DeleteExperimentById(ctx, 1) //delete experiment by id
+	if err != nil {
+		panic(err)
+	}
+
 	return nil
 }
 

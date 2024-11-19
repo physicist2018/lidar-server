@@ -86,6 +86,28 @@ func (q *Queries) CreateMeasurement(ctx context.Context, arg CreateMeasurementPa
 	return i, err
 }
 
+const deleteExperimentById = `-- name: DeleteExperimentById :exec
+DELETE
+FROM Experiment
+WHERE ID = ?
+`
+
+func (q *Queries) DeleteExperimentById(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteExperimentById, id)
+	return err
+}
+
+const deleteMeasurementById = `-- name: DeleteMeasurementById :exec
+DELETE
+FROM Measurement
+WHERE ID = ?
+`
+
+func (q *Queries) DeleteMeasurementById(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteMeasurementById, id)
+	return err
+}
+
 const getAllExperiments = `-- name: GetAllExperiments :many
 SELECT id, starttime, title, comments, wavelen, vertres, accum FROM Experiment
 `
@@ -192,13 +214,13 @@ func (q *Queries) GetAllMeasurementsForExpId(ctx context.Context, experimentID s
 	return items, nil
 }
 
-const getExperiment = `-- name: GetExperiment :one
+const getExperimentById = `-- name: GetExperimentById :one
 SELECT id, starttime, title, comments, wavelen, vertres, accum FROM Experiment
 WHERE ID=? LIMIT 1
 `
 
-func (q *Queries) GetExperiment(ctx context.Context, id int64) (Experiment, error) {
-	row := q.db.QueryRowContext(ctx, getExperiment, id)
+func (q *Queries) GetExperimentById(ctx context.Context, id int64) (Experiment, error) {
+	row := q.db.QueryRowContext(ctx, getExperimentById, id)
 	var i Experiment
 	err := row.Scan(
 		&i.ID,
