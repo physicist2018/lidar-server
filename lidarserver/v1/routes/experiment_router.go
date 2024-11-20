@@ -1,11 +1,15 @@
 package routes
 
 import (
-	"fmt"
-	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"lidarserver.sqlc/app/lidarserver/v1/controller"
 )
 
-func GetAllExperiments(w http.ResponseWriter, r *http.Request) {
-
-	fmt.Fprintf(w, "%v", []int{1, 2, 3, 4})
+func GetAllExperimentById(c *gin.Context) {
+	expId := c.Param("id")
+	expid, _ := strconv.Atoi(expId)
+	exp := controller.GetAllExperiments(expid)
+	c.JSON(200, gin.H{"data": exp})
 }

@@ -1,7 +1,9 @@
 package routes
 
-import "net/http"
+import (
+	"github.com/gin-gonic/gin"
+)
 
-func MakeRoutes(m *http.ServeMux) {
-	m.Handle("GET /experiments", http.HandlerFunc(GetAllExperiments))
+func MakeRoutes(m *gin.Engine) {
+	m.GET("/experiments/:id", GetAllExperimentById)
 }
