@@ -1,21 +1,21 @@
 CREATE TABLE Experiment(
     ID integer primary key autoincrement,
-    starttime datetime not null default now,
-    title varchar(100) not null default 'no-title',
-    comments varchar(500) not null default 'no-comments',
-    wavelen real not null default 532.0,
-    vertres real not null default 1500.0,
-    accum integer not null default 10,
-    unique (starttime, title, accum)
+    Start_Time datetime not null default now,
+    Title varchar(100) not null default 'no-title',
+    Comments varchar(500) not null default 'no-comments',
+    Wavelen real not null default 532.0,
+    Vert_Res real not null default 1500.0,
+    Accum integer not null default 10,
+    unique (StartTime, Title, Accum)
 );
 
 CREATE TABLE Measurement(
     ID integer primary key autoincrement,
-    starttime datetime not null default now,
-    profcnt integer not null default 1,
-    proflen integer not null default 512,
-    reprate integer not null default 10,
-    profile json,
-    experiment_id integer,
-    CONSTRAINT experiment_fk FOREIGN KEY (experiment_id) REFERENCES Experiment(id)
+    Start_Time datetime not null default now,
+    Prof_Cnt integer not null default 1,
+    Prof_Len integer not null default 512,
+    Rep_Rate integer not null default 10,
+    Profile_Data json,
+    Experiment_ID integer,
+    CONSTRAINT experiment_fk FOREIGN KEY (Experiment_ID) REFERENCES Experiment(ID)
 );

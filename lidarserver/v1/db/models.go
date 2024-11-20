@@ -9,21 +9,21 @@ import (
 )
 
 type Experiment struct {
-	ID        int64
-	Starttime interface{}
-	Title     string
-	Comments  string
-	Wavelen   float64
-	Vertres   float64
-	Accum     int64
+	ID        int64       `db:"id" json:"id"`
+	StartTime interface{} `db:"start_time" json:"startTime"`
+	Title     string      `db:"title" json:"title"`
+	Comments  string      `db:"comments" json:"comments"`
+	Wavelen   float64     `db:"wavelen" json:"wavelen"`
+	VertRes   float64     `db:"vert_res" json:"vertRes"`
+	Accum     int64       `db:"accum" json:"accum"`
 }
 
 type Measurement struct {
-	ID           int64
-	Starttime    interface{}
-	Profcnt      int64
-	Proflen      int64
-	Reprate      int64
-	Profile      interface{}
-	ExperimentID sql.NullInt64
+	ID           int64         `db:"id" json:"id"`
+	StartTime    interface{}   `db:"start_time" json:"startTime"`
+	ProfCnt      int64         `db:"prof_cnt" json:"profCnt"`
+	ProfLen      int64         `db:"prof_len" json:"profLen"`
+	RepRate      int64         `db:"rep_rate" json:"repRate"`
+	ProfileData  interface{}   `db:"profile_data" json:"profileData"`
+	ExperimentID sql.NullInt64 `db:"experiment_id" json:"experimentId"`
 }

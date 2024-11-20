@@ -12,37 +12,37 @@ import (
 
 const createExperiment = `-- name: CreateExperiment :one
 INSERT INTO Experiment (
-    title, starttime, comments, wavelen, vertres, accum
+    Title, Start_Time, Comments, Wavelen, Vert_Res, Accum
 ) VALUES (?, ?, ?, ?, ?, ?)
-RETURNING id, starttime, title, comments, wavelen, vertres, accum
+RETURNING id, start_time, title, comments, wavelen, vert_res, accum
 `
 
 type CreateExperimentParams struct {
-	Title     string
-	Starttime interface{}
-	Comments  string
-	Wavelen   float64
-	Vertres   float64
-	Accum     int64
+	Title     string      `db:"title" json:"title"`
+	StartTime interface{} `db:"start_time" json:"startTime"`
+	Comments  string      `db:"comments" json:"comments"`
+	Wavelen   float64     `db:"wavelen" json:"wavelen"`
+	VertRes   float64     `db:"vert_res" json:"vertRes"`
+	Accum     int64       `db:"accum" json:"accum"`
 }
 
 func (q *Queries) CreateExperiment(ctx context.Context, arg CreateExperimentParams) (Experiment, error) {
 	row := q.db.QueryRowContext(ctx, createExperiment,
 		arg.Title,
-		arg.Starttime,
+		arg.StartTime,
 		arg.Comments,
 		arg.Wavelen,
-		arg.Vertres,
+		arg.VertRes,
 		arg.Accum,
 	)
 	var i Experiment
 	err := row.Scan(
 		&i.ID,
-		&i.Starttime,
+		&i.StartTime,
 		&i.Title,
 		&i.Comments,
 		&i.Wavelen,
-		&i.Vertres,
+		&i.VertRes,
 		&i.Accum,
 	)
 	return i, err
@@ -50,37 +50,37 @@ func (q *Queries) CreateExperiment(ctx context.Context, arg CreateExperimentPara
 
 const createMeasurement = `-- name: CreateMeasurement :one
 INSERT INTO Measurement(
-    starttime, profcnt, proflen, reprate, profile,  experiment_id
+    Start_Time, Prof_Cnt, Prof_Len, Rep_Rate, Profile_Data,  Experiment_ID
 ) VALUES (?, ?, ?, ?, ?, ?)
-RETURNING id, starttime, profcnt, proflen, reprate, profile, experiment_id
+RETURNING id, start_time, prof_cnt, prof_len, rep_rate, profile_data, experiment_id
 `
 
 type CreateMeasurementParams struct {
-	Starttime    interface{}
-	Profcnt      int64
-	Proflen      int64
-	Reprate      int64
-	Profile      interface{}
-	ExperimentID sql.NullInt64
+	StartTime    interface{}   `db:"start_time" json:"startTime"`
+	ProfCnt      int64         `db:"prof_cnt" json:"profCnt"`
+	ProfLen      int64         `db:"prof_len" json:"profLen"`
+	RepRate      int64         `db:"rep_rate" json:"repRate"`
+	ProfileData  interface{}   `db:"profile_data" json:"profileData"`
+	ExperimentID sql.NullInt64 `db:"experiment_id" json:"experimentId"`
 }
 
 func (q *Queries) CreateMeasurement(ctx context.Context, arg CreateMeasurementParams) (Measurement, error) {
 	row := q.db.QueryRowContext(ctx, createMeasurement,
-		arg.Starttime,
-		arg.Profcnt,
-		arg.Proflen,
-		arg.Reprate,
-		arg.Profile,
+		arg.StartTime,
+		arg.ProfCnt,
+		arg.ProfLen,
+		arg.RepRate,
+		arg.ProfileData,
 		arg.ExperimentID,
 	)
 	var i Measurement
 	err := row.Scan(
 		&i.ID,
-		&i.Starttime,
-		&i.Profcnt,
-		&i.Proflen,
-		&i.Reprate,
-		&i.Profile,
+		&i.StartTime,
+		&i.ProfCnt,
+		&i.ProfLen,
+		&i.RepRate,
+		&i.ProfileData,
 		&i.ExperimentID,
 	)
 	return i, err
@@ -109,7 +109,7 @@ func (q *Queries) DeleteMeasurementById(ctx context.Context, id int64) error {
 }
 
 const getAllExperiments = `-- name: GetAllExperiments :many
-SELECT id, starttime, title, comments, wavelen, vertres, accum FROM Experiment
+SELECT id, start_time, title, comments, wavelen, vert_res, accum FROM Experiment ORDER BY Start_Time
 `
 
 func (q *Queries) GetAllExperiments(ctx context.Context) ([]Experiment, error) {
@@ -123,11 +123,11 @@ func (q *Queries) GetAllExperiments(ctx context.Context) ([]Experiment, error) {
 		var i Experiment
 		if err := rows.Scan(
 			&i.ID,
-			&i.Starttime,
+			&i.StartTime,
 			&i.Title,
 			&i.Comments,
 			&i.Wavelen,
-			&i.Vertres,
+			&i.VertRes,
 			&i.Accum,
 		); err != nil {
 			return nil, err
@@ -144,7 +144,7 @@ func (q *Queries) GetAllExperiments(ctx context.Context) ([]Experiment, error) {
 }
 
 const getAllMeasurements = `-- name: GetAllMeasurements :many
-SELECT id, starttime, profcnt, proflen, reprate, profile, experiment_id FROM Measurement
+SELECT id, start_time, prof_cnt, prof_len, rep_rate, profile_data, experiment_id FROM Measurement
 `
 
 func (q *Queries) GetAllMeasurements(ctx context.Context) ([]Measurement, error) {
@@ -158,11 +158,11 @@ func (q *Queries) GetAllMeasurements(ctx context.Context) ([]Measurement, error)
 		var i Measurement
 		if err := rows.Scan(
 			&i.ID,
-			&i.Starttime,
-			&i.Profcnt,
-			&i.Proflen,
-			&i.Reprate,
-			&i.Profile,
+			&i.StartTime,
+			&i.ProfCnt,
+			&i.ProfLen,
+			&i.RepRate,
+			&i.ProfileData,
 			&i.ExperimentID,
 		); err != nil {
 			return nil, err
@@ -179,8 +179,8 @@ func (q *Queries) GetAllMeasurements(ctx context.Context) ([]Measurement, error)
 }
 
 const getAllMeasurementsForExpId = `-- name: GetAllMeasurementsForExpId :many
-SELECT id, starttime, profcnt, proflen, reprate, profile, experiment_id FROM Measurement
-WHERE experiment_id = ?
+SELECT id, start_time, prof_cnt, prof_len, rep_rate, profile_data, experiment_id FROM Measurement
+WHERE Experiment_ID = ? ORDER BY Start_Time
 `
 
 func (q *Queries) GetAllMeasurementsForExpId(ctx context.Context, experimentID sql.NullInt64) ([]Measurement, error) {
@@ -194,11 +194,11 @@ func (q *Queries) GetAllMeasurementsForExpId(ctx context.Context, experimentID s
 		var i Measurement
 		if err := rows.Scan(
 			&i.ID,
-			&i.Starttime,
-			&i.Profcnt,
-			&i.Proflen,
-			&i.Reprate,
-			&i.Profile,
+			&i.StartTime,
+			&i.ProfCnt,
+			&i.ProfLen,
+			&i.RepRate,
+			&i.ProfileData,
 			&i.ExperimentID,
 		); err != nil {
 			return nil, err
@@ -215,7 +215,7 @@ func (q *Queries) GetAllMeasurementsForExpId(ctx context.Context, experimentID s
 }
 
 const getExperimentById = `-- name: GetExperimentById :one
-SELECT id, starttime, title, comments, wavelen, vertres, accum FROM Experiment
+SELECT id, start_time, title, comments, wavelen, vert_res, accum FROM Experiment
 WHERE ID=? LIMIT 1
 `
 
@@ -224,18 +224,18 @@ func (q *Queries) GetExperimentById(ctx context.Context, id int64) (Experiment, 
 	var i Experiment
 	err := row.Scan(
 		&i.ID,
-		&i.Starttime,
+		&i.StartTime,
 		&i.Title,
 		&i.Comments,
 		&i.Wavelen,
-		&i.Vertres,
+		&i.VertRes,
 		&i.Accum,
 	)
 	return i, err
 }
 
 const getMeasurement = `-- name: GetMeasurement :one
-SELECT id, starttime, profcnt, proflen, reprate, profile, experiment_id FROM Measurement
+SELECT id, start_time, prof_cnt, prof_len, rep_rate, profile_data, experiment_id FROM Measurement
 WHERE ID=? LIMIT 1
 `
 
@@ -244,11 +244,11 @@ func (q *Queries) GetMeasurement(ctx context.Context, id int64) (Measurement, er
 	var i Measurement
 	err := row.Scan(
 		&i.ID,
-		&i.Starttime,
-		&i.Profcnt,
-		&i.Proflen,
-		&i.Reprate,
-		&i.Profile,
+		&i.StartTime,
+		&i.ProfCnt,
+		&i.ProfLen,
+		&i.RepRate,
+		&i.ProfileData,
 		&i.ExperimentID,
 	)
 	return i, err

@@ -4,7 +4,7 @@ WHERE ID=? LIMIT 1;
 
 -- name: CreateExperiment :one
 INSERT INTO Experiment (
-    title, starttime, comments, wavelen, vertres, accum
+    Title, Start_Time, Comments, Wavelen, Vert_Res, Accum
 ) VALUES (?, ?, ?, ?, ?, ?)
 RETURNING *;
 
@@ -14,7 +14,7 @@ FROM Experiment
 WHERE ID = ?;
 
 -- name: GetAllExperiments :many
-SELECT * FROM Experiment ORDER BY starttime;
+SELECT * FROM Experiment ORDER BY Start_Time;
 
 -- name: GetMeasurement :one
 SELECT * FROM Measurement
@@ -25,11 +25,11 @@ SELECT * FROM Measurement;
 
 -- name: GetAllMeasurementsForExpId :many
 SELECT * FROM Measurement
-WHERE experiment_id = ? ORDER BY starttime;
+WHERE Experiment_ID = ? ORDER BY Start_Time;
 
 -- name: CreateMeasurement :one
 INSERT INTO Measurement(
-    starttime, profcnt, proflen, reprate, profile,  experiment_id
+    Start_Time, Prof_Cnt, Prof_Len, Rep_Rate, Profile_Data,  Experiment_ID
 ) VALUES (?, ?, ?, ?, ?, ?)
 RETURNING *;
 
@@ -37,7 +37,3 @@ RETURNING *;
 DELETE
 FROM Measurement
 WHERE ID = ?;
-
--- name: GetFullMeasurementById :one
--- объединяет измерения из разных каналов
-SELECT * FROM Measurement INNER JOIN
