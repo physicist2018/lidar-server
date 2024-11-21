@@ -29,8 +29,8 @@ WHERE experiment_id = ? ORDER BY starttime;
 
 -- name: CreateMeasurement :one
 INSERT INTO Measurement(
-    starttime, profcnt, proflen, reprate, profile,  experiment_id
-) VALUES (?, ?, ?, ?, ?, ?)
+    starttime, profcnt, proflen, reprate, prof_type, profile,  experiment_id
+) VALUES (?, ?, ?, ?, ?, ?, ?)
 RETURNING *;
 
 -- name: DeleteMeasurementById :exec
@@ -38,6 +38,3 @@ DELETE
 FROM Measurement
 WHERE ID = ?;
 
--- name: GetFullMeasurementById :one
--- объединяет измерения из разных каналов
-SELECT * FROM Measurement INNER JOIN

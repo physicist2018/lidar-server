@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
 	lidardb "lidarserver.sqlc/app/lidarserver/v1/db"
 	"lidarserver.sqlc/app/lidarserver/v1/routes"
 )
@@ -68,12 +67,21 @@ func run() error {
 	return nil
 }
 
+func Logging(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		start := time.Now()
+		next.ServeHTTP(w, req)
+		log.Printf("%s %s %s", req.Method, req.RequestURI, time.Since(start))
+	})
+}
+
 func main() {
 	mux := http.NewServeMux()
 
-	if err := run(); err != nil {
-		log.Fatal(err)
-	}
+	// if err := run(); err != nil {
+	// 	log.Fatal(err)
+	// }
 	routes.MakeRoutes(mux)
-	http.ListenAndServe(":7777", mux)
+	handler := Logging(mux)
+	http.ListenAndServe(":7777", handler)
 }

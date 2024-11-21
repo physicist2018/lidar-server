@@ -50,9 +50,9 @@ func (q *Queries) CreateExperiment(ctx context.Context, arg CreateExperimentPara
 
 const createMeasurement = `-- name: CreateMeasurement :one
 INSERT INTO Measurement(
-    starttime, profcnt, proflen, reprate, profile,  experiment_id
-) VALUES (?, ?, ?, ?, ?, ?)
-RETURNING id, starttime, profcnt, proflen, reprate, profile, experiment_id
+    starttime, profcnt, proflen, reprate, prof_type, profile,  experiment_id
+) VALUES (?, ?, ?, ?, ?, ?, ?)
+RETURNING id, starttime, profcnt, proflen, reprate, prof_type, profile, experiment_id
 `
 
 type CreateMeasurementParams struct {
@@ -60,6 +60,7 @@ type CreateMeasurementParams struct {
 	Profcnt      int64
 	Proflen      int64
 	Reprate      int64
+	ProfType     string
 	Profile      interface{}
 	ExperimentID sql.NullInt64
 }
@@ -70,6 +71,7 @@ func (q *Queries) CreateMeasurement(ctx context.Context, arg CreateMeasurementPa
 		arg.Profcnt,
 		arg.Proflen,
 		arg.Reprate,
+		arg.ProfType,
 		arg.Profile,
 		arg.ExperimentID,
 	)
@@ -80,6 +82,7 @@ func (q *Queries) CreateMeasurement(ctx context.Context, arg CreateMeasurementPa
 		&i.Profcnt,
 		&i.Proflen,
 		&i.Reprate,
+		&i.ProfType,
 		&i.Profile,
 		&i.ExperimentID,
 	)
@@ -109,7 +112,7 @@ func (q *Queries) DeleteMeasurementById(ctx context.Context, id int64) error {
 }
 
 const getAllExperiments = `-- name: GetAllExperiments :many
-SELECT id, starttime, title, comments, wavelen, vertres, accum FROM Experiment
+SELECT id, starttime, title, comments, wavelen, vertres, accum FROM Experiment ORDER BY starttime
 `
 
 func (q *Queries) GetAllExperiments(ctx context.Context) ([]Experiment, error) {
@@ -144,7 +147,7 @@ func (q *Queries) GetAllExperiments(ctx context.Context) ([]Experiment, error) {
 }
 
 const getAllMeasurements = `-- name: GetAllMeasurements :many
-SELECT id, starttime, profcnt, proflen, reprate, profile, experiment_id FROM Measurement
+SELECT id, starttime, profcnt, proflen, reprate, prof_type, profile, experiment_id FROM Measurement
 `
 
 func (q *Queries) GetAllMeasurements(ctx context.Context) ([]Measurement, error) {
@@ -162,6 +165,7 @@ func (q *Queries) GetAllMeasurements(ctx context.Context) ([]Measurement, error)
 			&i.Profcnt,
 			&i.Proflen,
 			&i.Reprate,
+			&i.ProfType,
 			&i.Profile,
 			&i.ExperimentID,
 		); err != nil {
@@ -179,8 +183,8 @@ func (q *Queries) GetAllMeasurements(ctx context.Context) ([]Measurement, error)
 }
 
 const getAllMeasurementsForExpId = `-- name: GetAllMeasurementsForExpId :many
-SELECT id, starttime, profcnt, proflen, reprate, profile, experiment_id FROM Measurement
-WHERE experiment_id = ?
+SELECT id, starttime, profcnt, proflen, reprate, prof_type, profile, experiment_id FROM Measurement
+WHERE experiment_id = ? ORDER BY starttime
 `
 
 func (q *Queries) GetAllMeasurementsForExpId(ctx context.Context, experimentID sql.NullInt64) ([]Measurement, error) {
@@ -198,6 +202,7 @@ func (q *Queries) GetAllMeasurementsForExpId(ctx context.Context, experimentID s
 			&i.Profcnt,
 			&i.Proflen,
 			&i.Reprate,
+			&i.ProfType,
 			&i.Profile,
 			&i.ExperimentID,
 		); err != nil {
@@ -235,7 +240,7 @@ func (q *Queries) GetExperimentById(ctx context.Context, id int64) (Experiment, 
 }
 
 const getMeasurement = `-- name: GetMeasurement :one
-SELECT id, starttime, profcnt, proflen, reprate, profile, experiment_id FROM Measurement
+SELECT id, starttime, profcnt, proflen, reprate, prof_type, profile, experiment_id FROM Measurement
 WHERE ID=? LIMIT 1
 `
 
@@ -248,6 +253,7 @@ func (q *Queries) GetMeasurement(ctx context.Context, id int64) (Measurement, er
 		&i.Profcnt,
 		&i.Proflen,
 		&i.Reprate,
+		&i.ProfType,
 		&i.Profile,
 		&i.ExperimentID,
 	)

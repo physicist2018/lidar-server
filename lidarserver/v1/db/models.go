@@ -24,6 +24,7 @@ type Measurement struct {
 	Profcnt      int64
 	Proflen      int64
 	Reprate      int64
+	ProfType     string
 	Profile      interface{}
 	ExperimentID sql.NullInt64
 }
