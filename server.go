@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
@@ -14,15 +15,22 @@ import (
 var ddl string
 
 func main() {
-	qry, err := lidardb.InitializeConnection("1.db")
+	dbname := "lidar.db"
+	if len(os.Args) == 2 {
+		dbname = os.Args[1]
+	}
+
+	var err error
+	lidardb.Qry, err = lidardb.InitializeConnection(dbname)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer lidardb.CloseConnection(qry)
+	defer lidardb.CloseConnection(lidardb.Qry)
 
+	gin.SetMode(gin.DebugMode)
 	router := gin.Default()
 
 	routes.MakeRoutes(router)
 
-	router.Run(":7777")
+	router.Run("localhost:7777")
 }

@@ -5,5 +5,6 @@ import (
 )
 
 func MakeRoutes(m *gin.Engine) {
-	m.GET("/experiments/:id", GetAllExperimentById)
+	m.GET("/experiments", GetAllExperiments)
+	m.GET("/experiments/:id", GetExperimentById)
 }

@@ -7,9 +7,14 @@ import (
 	"lidarserver.sqlc/app/lidarserver/v1/controller"
 )
 
-func GetAllExperimentById(c *gin.Context) {
+func GetExperimentById(c *gin.Context) {
 	expId := c.Param("id")
 	expid, _ := strconv.Atoi(expId)
-	exp := controller.GetAllExperiments(expid)
+	exp := controller.GetExperimentById(expid)
 	c.JSON(200, gin.H{"data": exp})
+}
+
+func GetAllExperiments(c *gin.Context) {
+	exps := controller.GetAllExperients()
+	c.JSON(200, gin.H{"data": exps})
 }
