@@ -1,0 +1,4 @@
+{
+    "connection_string": "lidar_admin:LidarKamchatka2024!@tcp(lidarbackup.dvo.ru:3307)/lidar_kamchatka",
+    "port": 8080
+}
