@@ -1,38 +1,40 @@
 package main
 
 import (
-	_ "embed"
-	"log"
+	"net/http"
 	"os"
+	"time"
 
-	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3"
-	lidardb "lidarserver.sqlc/app/lidarserver/v1/db"
-	"lidarserver.sqlc/app/lidarserver/v1/routes"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
+	"github.com/kataras/golog"
+	"lidarserver.sqlc/app/lidarserver/v2/routes"
 )
 
-//go:embed schema.sql
-var ddl string
-
-//go:generate go run lidarserver/scripts/include_sql.go
-
 func main() {
-	dbname := "lidar.db"
-	if len(os.Args) == 2 {
-		dbname = os.Args[1]
+
+	if err := godotenv.Load(); err != nil {
+		golog.Fatal(err.Error())
 	}
 
-	var err error
-	lidardb.Qry, err = lidardb.InitializeConnection(dbname)
-	if err != nil {
-		log.Fatal(err)
+	router := mux.NewRouter()
+	routes.NewRoutes(router)
+
+	//http.Handle("/", router)
+	golog.Info("Сервер запущен на порту 5000")
+
+	// Add logging capability to the router.
+	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
+
+	// Making the server run forever on 5555 port
+	// with router.
+	srv := &http.Server{
+		Handler:      loggedRouter,
+		Addr:         "0.0.0.0:5555",
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
 	}
-	defer lidardb.CloseConnection(lidardb.Qry)
 
-	gin.SetMode(gin.DebugMode)
-	router := gin.Default()
-
-	routes.MakeRoutes(router)
-
-	router.Run("localhost:7777")
+	srv.ListenAndServe() // listen and serve on 0.0.0.0:8080
 }
