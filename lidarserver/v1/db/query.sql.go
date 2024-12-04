@@ -86,6 +86,42 @@ func (q *Queries) CreateMeasurement(ctx context.Context, arg CreateMeasurementPa
 	return i, err
 }
 
+const createTableExperiment = `-- name: CreateTableExperiment :exec
+CREATE TABLE Experiment(
+    ID integer primary key autoincrement,
+    Start_Time timestamp not null default now,
+    Title varchar(100) not null default 'no-title',
+    Comments varchar(500) not null default 'no-comments',
+    Wavelen real not null default 532.0,
+    Vert_Res real not null default 1500.0,
+    Accum integer not null default 10,
+    unique (Start_Time, Title, Accum)
+)
+`
+
+func (q *Queries) CreateTableExperiment(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, createTableExperiment)
+	return err
+}
+
+const createTableMeasurement = `-- name: CreateTableMeasurement :exec
+CREATE TABLE Measurement(
+    ID integer primary key autoincrement,
+    Start_Time timestamp not null default now,
+    Prof_Cnt integer not null default 1,
+    Prof_Len integer not null default 512,
+    Rep_Rate integer not null default 10,
+    Profile_Data json,
+    Experiment_ID integer,
+    CONSTRAINT experiment_fk FOREIGN KEY (Experiment_ID) REFERENCES Experiment(ID)
+)
+`
+
+func (q *Queries) CreateTableMeasurement(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, createTableMeasurement)
+	return err
+}
+
 const deleteExperimentById = `-- name: DeleteExperimentById :exec
 DELETE
 FROM Experiment

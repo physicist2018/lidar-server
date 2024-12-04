@@ -9,19 +9,22 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-//go:embed schema.sql
-var ddl string
-
 func InitializeConnection(dbname string) (*Queries, error) {
 	dbb, err := sql.Open("sqlite3", dbname)
 	if err != nil {
 		panic(err)
 	}
 
-	if res, err := dbb.ExecContext(context.Background(), ddl); err != nil {
-		log.Panicln(err, res)
-	}
 	queries := New(dbb)
+	err = queries.CreateTableExperiment(context.Background())
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = queries.CreateTableMeasurement(context.Background())
+	if err != nil {
+		log.Println(err)
+	}
 	return queries, nil
 }
 
@@ -33,17 +36,3 @@ func CloseConnection(qry *Queries) error {
 }
 
 var Qry *Queries
-
-// func init() {
-// 	Qry, _ = InitializeConnection("1.db")
-// 	r, err := Qry.CreateExperiment(context.Background(),
-// 		CreateExperimentParams{
-// 			Title:     "New experiment",
-// 			Comments:  "Simple experiment",
-// 			StartTime: time.Now(),
-// 			Wavelen:   532.0,
-// 			VertRes:   1500.0,
-// 			Accum:     1,
-// 		})
-// 	log.Println(r, err)
-// }

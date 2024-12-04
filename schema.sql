@@ -1,6 +1,6 @@
-CREATE TABLE IF NOT EXISTS Experiment(
+CREATE TABLE Experiment(
     ID integer primary key autoincrement,
-    Start_Time datetime not null default now,
+    Start_Time timestamp not null default now,
     Title varchar(100) not null default 'no-title',
     Comments varchar(500) not null default 'no-comments',
     Wavelen real not null default 532.0,
@@ -9,9 +9,9 @@ CREATE TABLE IF NOT EXISTS Experiment(
     unique (Start_Time, Title, Accum)
 );
 
-CREATE TABLE IF NOT EXISTS Measurement(
+CREATE TABLE Measurement(
     ID integer primary key autoincrement,
-    Start_Time datetime not null default now,
+    Start_Time timestamp not null default now,
     Prof_Cnt integer not null default 1,
     Prof_Len integer not null default 512,
     Rep_Rate integer not null default 10,

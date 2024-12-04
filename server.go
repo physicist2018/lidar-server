@@ -14,6 +14,8 @@ import (
 //go:embed schema.sql
 var ddl string
 
+//go:generate go run lidarserver/scripts/include_sql.go
+
 func main() {
 	dbname := "lidar.db"
 	if len(os.Args) == 2 {
