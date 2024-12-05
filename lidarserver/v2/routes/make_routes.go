@@ -6,6 +6,9 @@ import (
 )
 
 func NewRoutes(r *mux.Router) {
-	experimentRoutes := r.PathPrefix("/api/v1/experiment").Subrouter()
-	experimentRoutes.HandleFunc("", controller.FindAll)
+	experimentRoutes := r.PathPrefix("/api/v1/experiments").Subrouter()
+	experimentRoutes.HandleFunc("", controller.FindAll).Methods("GET")
+	experimentRoutes.HandleFunc("/{id}", controller.FindOne).Methods("GET")
+	experimentRoutes.HandleFunc("/{id}", controller.DeleteOne).Methods("DELETE")
+
 }

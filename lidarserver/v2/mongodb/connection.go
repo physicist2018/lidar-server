@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
+	"github.com/kataras/golog"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -113,4 +115,12 @@ func (c *Client) GetCollection(name string) *mongo.Collection {
 // returns error if collection does not exist or if there is an error
 func (c *Client) DropCollection(name string) error {
 	return c.client.Database(DB_NAME).Collection(name).Drop(context.Background())
+}
+
+func init() {
+	godotenv.Load()
+	golog.Info("Connecting to MONGO")
+	clt := GetDefaultMongoClientPanic()
+	golog.Info("Creating collection")
+	clt.CreateCollection("Experiment")
 }
