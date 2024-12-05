@@ -1,14 +1,13 @@
 package routes
 
 import (
-	"github.com/gorilla/mux"
+	"net/http"
+
 	"lidarserver.sqlc/app/lidarserver/v2/controller"
 )
 
-func NewRoutes(r *mux.Router) {
-	experimentRoutes := r.PathPrefix("/api/v1/experiments").Subrouter()
-	experimentRoutes.HandleFunc("", controller.FindAll).Methods("GET")
-	experimentRoutes.HandleFunc("/{id}", controller.FindOne).Methods("GET")
-	experimentRoutes.HandleFunc("/{id}", controller.DeleteOne).Methods("DELETE")
-
+func NewRoutes(r *http.ServeMux) {
+	r.HandleFunc("GET /api/v1/experiments", controller.FindAll)
+	r.HandleFunc("GET /api/v1/experiments/{id}", controller.FindOne)
+	r.HandleFunc("DELETE /api/v1/experiments/{id}", controller.DeleteOne)
 }

@@ -19,9 +19,9 @@ func FindAll(w http.ResponseWriter, r *http.Request) {
 func FindOne(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Add("Content-Type", "application/json")
-	vars := mux.Vars(r)
+	id := r.PathValue("id")
 
-	json.NewEncoder(w).Encode(vars["id"])
+	json.NewEncoder(w).Encode(id)
 }
 
 func DeleteOne(w http.ResponseWriter, r *http.Request) {

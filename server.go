@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"github.com/kataras/golog"
 	"lidarserver.sqlc/app/lidarserver/v2/routes"
@@ -18,7 +17,7 @@ func main() {
 		golog.Fatal(err.Error())
 	}
 
-	router := mux.NewRouter()
+	router := http.NewServeMux()
 	routes.NewRoutes(router)
 
 	//http.Handle("/", router)
