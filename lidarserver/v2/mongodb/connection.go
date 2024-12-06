@@ -119,8 +119,8 @@ func (c *Client) DropCollection(name string) error {
 
 func init() {
 	godotenv.Load()
-	golog.Info("Connecting to MONGO")
+	golog.Info("--== Connecting to MONGO ==--")
 	clt := GetDefaultMongoClientPanic()
-	golog.Info("Creating collection")
+	golog.Info("--== Creating collections ==--")
 	clt.CreateCollection("Experiment")
 }

@@ -21,7 +21,7 @@ func main() {
 	routes.NewRoutes(router)
 
 	//http.Handle("/", router)
-	golog.Info("Сервер запущен на порту 5555")
+	golog.Info("Server started at :5555")
 
 	// Add logging capability to the router.
 	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
