@@ -21,7 +21,7 @@ func main() {
 	routes.NewRoutes(router)
 
 	//http.Handle("/", router)
-	golog.Info("Server started at :5555")
+	golog.Info("Server started at :5000")
 
 	// Add logging capability to the router.
 	loggedRouter := handlers.LoggingHandler(os.Stdout, router)
@@ -30,7 +30,7 @@ func main() {
 	// with router.
 	srv := &http.Server{
 		Handler:      loggedRouter,
-		Addr:         "0.0.0.0:5555",
+		Addr:         "0.0.0.0:5000",
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

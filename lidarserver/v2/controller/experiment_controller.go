@@ -4,40 +4,82 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/kataras/golog"
+	"lidarserver.sqlc/app/lidarserver/v2/models"
 	"lidarserver.sqlc/app/lidarserver/v2/services"
 )
 
-// FindAll is a function that handles HTTP requests to the "/experiments" endpoint.
-// It sets the status and response header, finds all documents in the Experiment collection, encodes the result to JSON, and writes it to the response writer.
-func FindAll(w http.ResponseWriter, r *http.Request) {
+// GetAllExperiments
+func GetAllExperiments(w http.ResponseWriter, r *http.Request) {
+	// obtain the result
+	result := services.ES.FindAll()
 
-	// set status and response header
+	// write neseccery headers
 	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 
-	// find all documents int Experiment collection
-	ret := services.ES.FindAll()
-
-	// encode to json
-	json.NewEncoder(w).Encode(ret)
+	// marshal result to response stream
+	json.NewEncoder(w).Encode(result)
 }
 
-// FindOne is a function that handles HTTP requests to the "/experiments/{id}" endpoint.
-// It sets the status and response header, gets the ID from the request path, finds a document in the Experiment collection by ID, encodes the result to JSON, and writes it to the response writer.
-func FindOne(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Content-Type", "application/json")
+func GetOneExperiment(w http.ResponseWriter, r *http.Request) {
+
 	id := r.PathValue("id")
-	ret := services.ES.FindOne(id)
+	// obtain the result
+	result := services.ES.FindOne(id)
 
-	json.NewEncoder(w).Encode(ret)
+	// write neseccery headers
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	// marshal result to response stream
+	json.NewEncoder(w).Encode(result)
 }
 
-func DeleteOne(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Content-Type", "application/json")
-	vars := mux.Vars(r)
+func DeleteOneExperiment(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	res := services.ES.DeleteOne(id)
 
-	json.NewEncoder(w).Encode(vars["id"])
+	// write neseccery headers
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+
+	// marshal result to response stream
+	json.NewEncoder(w).Encode(res)
+}
+
+func CreateOneExperiment(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	exp := &models.ExperimentModel{}
+	err := decoder.Decode(exp)
+	if err != nil {
+		golog.Error(err.Error())
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte("Error in JSON data"))
+		return
+	}
+
+	resp := services.ES.CreateOne(exp)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
+
+func UpdateOneExeriment(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	decoder := json.NewDecoder(r.Body)
+	exp := &models.ExperimentModel{}
+	err := decoder.Decode(exp)
+	if err != nil {
+		golog.Error(err.Error())
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte("Error in JSON data"))
+		return
+	}
+
+	resp := services.ES.UpdateOne(id, exp)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
 }
