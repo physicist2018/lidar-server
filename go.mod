@@ -4,14 +4,12 @@ go 1.23.1
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/gorilla/handlers v1.5.2
 	github.com/joho/godotenv v1.5.1
 	github.com/kataras/golog v0.1.12
 	gopkg.in/rethinkdb/rethinkdb-go.v6 v6.2.2
 )
 
 require (
-	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/golang/protobuf v1.5.0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/hailocab/go-hostpool v0.0.0-20160125115350-e80d13ce29ed // indirect
