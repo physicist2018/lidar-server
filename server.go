@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 	"time"
@@ -21,6 +22,8 @@ func Logging(next http.Handler) http.Handler {
 
 func main() {
 
+	port := flag.Int("port", 5432, "Порт, на котором будет вращаться сервер.")
+	flag.Parse()
 	if err := godotenv.Load(); err != nil {
 		golog.Fatal(err.Error())
 	}
@@ -28,8 +31,7 @@ func main() {
 	router := http.NewServeMux()
 	routes.NewRoutes(router)
 
-	//http.Handle("/", router)
-	golog.Info("Server started at :5000")
+	golog.Info(fmt.Sprintf("Server started at port: %d", *port))
 
 	// Add logging capability to the router.
 	loggedRouter := Logging(router)
@@ -38,7 +40,7 @@ func main() {
 	// with router.
 	srv := &http.Server{
 		Handler:      loggedRouter,
-		Addr:         "0.0.0.0:5000",
+		Addr:         fmt.Sprintf("0.0.0.0:%d", *port),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}

@@ -15,8 +15,8 @@ func GetAllExperiments(w http.ResponseWriter, r *http.Request) {
 	result := services.ES.FindAll()
 
 	// write neseccery headers
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 
 	// marshal result to response stream
 	json.NewEncoder(w).Encode(result)
@@ -28,9 +28,10 @@ func GetOneExperiment(w http.ResponseWriter, r *http.Request) {
 	// obtain the result
 	result := services.ES.FindOne(id)
 
-	// write neseccery headers
-	w.WriteHeader(http.StatusOK)
+	// write neseccery header
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
 	// marshal result to response stream
 	json.NewEncoder(w).Encode(result)
 }
@@ -40,8 +41,8 @@ func DeleteOneExperiment(w http.ResponseWriter, r *http.Request) {
 	res := services.ES.DeleteOne(id)
 
 	// write neseccery headers
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 
 	// marshal result to response stream
 	json.NewEncoder(w).Encode(res)
@@ -53,15 +54,15 @@ func CreateOneExperiment(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(exp)
 	if err != nil {
 		golog.Error(err.Error())
-		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Error in JSON data"))
 		return
 	}
 
 	resp := services.ES.CreateOne(exp)
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(resp)
 }
 
@@ -72,14 +73,15 @@ func UpdateOneExeriment(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(exp)
 	if err != nil {
 		golog.Error(err.Error())
-		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Error in JSON data"))
 		return
 	}
 
 	resp := services.ES.UpdateOne(id, exp)
-	w.WriteHeader(http.StatusOK)
+
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
 }

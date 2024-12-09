@@ -11,23 +11,14 @@
             "wavelength": 532,
             "profile_length":8,
             "profile_count":1,
-            "data": [1,2,3,4,5,6,7,8]
-        },
-        {
-            "start_time":"2020-01-01T12:23:23Z",
-            "repetition_rate":10,
-            "wavelength": 532,
-            "profile_length":8,
-            "profile_count":1,
-            "data": [1,2,3,4,5,6,7,8]
-        },
-        {
-            "start_time":"2020-01-01T12:23:33Z",
-            "repetition_rate":10,
-            "wavelength": 532,
-            "profile_length":8,
-            "profile_count":1,
-            "data": [1,2,3,4,5,6,7,8]
+            "data": [1,2,3,4,5,6,7,8],
+            "result_scattering_ratio": {
+                "id": "",
+                "reference_alt": 0,
+                "reference_value": 0,
+                "background_alt": 0,
+                "profile": [1,2,3,4,5,5,6]
+            }
         }
     ],
     "dak":[
@@ -38,22 +29,8 @@
             "profile_length":8,
             "profile_count":1,
             "data": [1,2,3,4,5,6,7,8]
-        },
-        {
-            "start_time":"2020-01-01T12:23:23Z",
-            "repetition_rate":10,
-            "wavelength": 532,
-            "profile_length":8,
-            "profile_count":1,
-            "data": [1,2,3,4,5,6,7,8]
-        },
-        {
-            "start_time":"2020-01-01T12:23:33Z",
-            "repetition_rate":10,
-            "wavelength": 532,
-            "profile_length":8,
-            "profile_count":1,
-            "data": [1,2,3,4,5,6,7,8]
         }
     ]
 }
+
+
