@@ -1,87 +1,49 @@
 package main
 
 import (
-	"context"
-	"database/sql"
-	_ "embed"
-	"log"
+	"flag"
+	"fmt"
 	"net/http"
 	"time"
 
-	lidardb "lidarserver.sqlc/app/lidarserver/v1/db"
-	"lidarserver.sqlc/app/lidarserver/v1/routes"
+	"github.com/joho/godotenv"
+	"github.com/kataras/golog"
+	"lidarserver.sqlc/app/lidarserver/v2/routes"
 )
 
-//go:embed schema.sql
-var ddl string
-
-func run() error {
-
-	ctx := context.Background()
-	db, err := sql.Open("sqlite3", "1.db")
-	if err != nil {
-		return err
-	}
-
-	// create tables
-	if _, err := db.ExecContext(ctx, ddl); err != nil {
-		log.Println(err)
-	}
-
-	queries := lidardb.New(db)
-
-	res, err := queries.CreateExperiment(ctx,
-		lidardb.CreateExperimentParams{
-			Title:     "123123",
-			Comments:  "2312312312312",
-			Starttime: time.Now(),
-			Wavelen:   355.0,
-			Vertres:   1500.0,
-			Accum:     100,
-		})
-	if err != nil {
-		return err
-	}
-
-	log.Println(res)
-	res11, err1 := queries.GetExperimentById(ctx, 1) // get experiment by id
-	// list all authors
-	if err1 != nil {
-		return err
-	}
-	log.Println(res11)
-	res2, err := queries.GetAllExperiments(ctx) // get all experiments
-	if err != nil {
-		panic(err)
-	}
-
-	for _, v := range res2 {
-		log.Println(v.ID, v.Starttime, v.Title, v.Comments, v.Wavelen)
-	}
-
-	err = queries.DeleteExperimentById(ctx, 1) //delete experiment by id
-	if err != nil {
-		panic(err)
-	}
-
-	return nil
-}
-
+// Logging middleware for logging each IO operation
 func Logging(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		next.ServeHTTP(w, req)
-		log.Printf("%s %s %s", req.Method, req.RequestURI, time.Since(start))
+		next.ServeHTTP(w, r)
+		golog.Info(fmt.Sprintf("%s\t%s\t%.3f ms", r.Method, r.RequestURI, float64(time.Since(start).Microseconds())/1000.0))
 	})
 }
 
 func main() {
-	mux := http.NewServeMux()
 
-	// if err := run(); err != nil {
-	// 	log.Fatal(err)
-	// }
-	routes.MakeRoutes(mux)
-	handler := Logging(mux)
-	http.ListenAndServe(":7777", handler)
+	port := flag.Int("port", 5432, "Порт, на котором будет вращаться сервер.")
+	flag.Parse()
+	if err := godotenv.Load(); err != nil {
+		golog.Fatal(err.Error())
+	}
+
+	router := http.NewServeMux()
+	routes.NewRoutes(router)
+
+	golog.Info(fmt.Sprintf("Server started at port: %d", *port))
+
+	// Add logging capability to the router.
+	loggedRouter := Logging(router)
+
+	// Making the server run forever on 5555 port
+	// with router.
+	srv := &http.Server{
+		Handler:      loggedRouter,
+		Addr:         fmt.Sprintf("0.0.0.0:%d", *port),
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+
+	srv.ListenAndServe() // listen and serve on 0.0.0.0:8080
 }

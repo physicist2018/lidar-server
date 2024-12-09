@@ -1,0 +1,36 @@
+{
+    "title":"Эксперимент №1",
+    "comments":"нет ничего",
+    "spatial_res":1500,
+    "accum_time":10,
+    "start_time": "2020-01-01T12:23:15Z",
+    "dat":[
+        {
+            "start_time":"2020-01-01T12:23:13Z",
+            "repetition_rate":10,
+            "wavelength": 532,
+            "profile_length":8,
+            "profile_count":1,
+            "data": [1,2,3,4,5,6,7,8],
+            "result_scattering_ratio": {
+                "id": "",
+                "reference_alt": 0,
+                "reference_value": 0,
+                "background_alt": 0,
+                "profile": [1,2,3,4,5,5,6]
+            }
+        }
+    ],
+    "dak":[
+        {
+            "start_time":"2020-01-01T12:23:13Z",
+            "repetition_rate":10,
+            "wavelength": 532,
+            "profile_length":8,
+            "profile_count":1,
+            "data": [1,2,3,4,5,6,7,8]
+        }
+    ]
+}
+
+
