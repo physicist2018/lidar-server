@@ -12,6 +12,9 @@ type ExperimentService struct{}
 
 var ES ExperimentService
 
+// FindAll is a function that retrieves all experiments from the database.
+// It connects to the database, runs a query to fetch all experiments, and returns them as a slice of ExperimentModel.
+// If there is an error during the database operation, it logs the error and returns nil.
 func (e *ExperimentService) FindAll() []models.ExperimentModel {
 
 	client := dbase.GetConnection()
@@ -29,6 +32,9 @@ func (e *ExperimentService) FindAll() []models.ExperimentModel {
 	return ret
 }
 
+// FindOne is a function that retrieves a single experiment from the database by its ID.
+// It connects to the database, runs a query to fetch the experiment with the specified ID, and returns it as an ExperimentModel.
+// If there is an error during the database operation, it logs the error and returns nil.
 func (e *ExperimentService) FindOne(id string) *models.ExperimentModel {
 	client := dbase.GetConnection()
 	cur, err := r.DB(dbase.DB_NAME).Table(dbase.TABLE_NAME).Get(id).Run(client.Session)
@@ -46,6 +52,9 @@ func (e *ExperimentService) FindOne(id string) *models.ExperimentModel {
 	return ret
 }
 
+// UpdateOne is a function that updates a single experiment in the database by its ID.
+// It connects to the database, runs a query to update the experiment with the specified ID, and returns the result as a ResponseModel.
+// If there is an error during the database operation, it logs the error and returns nil.
 func (e *ExperimentService) UpdateOne(id string, m *models.ExperimentModel) *models.ResponseModel {
 	client := dbase.GetConnection()
 	cur, err := r.DB(dbase.DB_NAME).Table(dbase.TABLE_NAME).Get(id).Update(m).Run(client.Session)
@@ -64,6 +73,9 @@ func (e *ExperimentService) UpdateOne(id string, m *models.ExperimentModel) *mod
 	return res
 }
 
+// DeleteOne is a function that deletes a single experiment from the database by its ID.
+// It connects to the database, runs a query to delete the experiment with the specified ID, and returns the result as a ResponseModel.
+// If there is an error during the database operation, it logs the error and returns nil.
 func (e *ExperimentService) DeleteOne(id string) *models.ResponseModel {
 	client := dbase.GetConnection()
 	cur, err := r.DB(dbase.DB_NAME).Table(dbase.TABLE_NAME).Get(id).Delete().Run(client.Session)
@@ -80,6 +92,10 @@ func (e *ExperimentService) DeleteOne(id string) *models.ResponseModel {
 	return res
 }
 
+// CreateOne is a function that creates a new experiment in the database.
+// It connects to the database, prepares the experiment data by generating unique IDs for its profiles and data, and inserts the experiment into the database.
+// It returns the result of the insertion as a ResponseModel.
+// If there is an error during the database operation, it logs the error and returns nil.
 func (e *ExperimentService) CreateOne(m *models.ExperimentModel) *models.ResponseModel {
 
 	client := dbase.GetConnection()
@@ -107,68 +123,3 @@ func (e *ExperimentService) CreateOne(m *models.ExperimentModel) *models.Respons
 	golog.Info(res)
 	return res
 }
-
-// func (e *ExperimentService) FindAll() []models.ExperimentModel {
-// 	var res []models.ExperimentModel
-// 	golog.Info("-- Entering FindAll")
-// 	clt := mongodb.GetDefaultMongoClientPanic()
-// 	experiment_collection := clt.GetCollection("Experiment")
-// 	cur, err := experiment_collection.Find(context.Background(), bson.D{})
-// 	if err != nil {
-// 		golog.Error(err.Error())
-// 		return nil
-// 	}
-
-// 	if err = cur.All(context.Background(), &res); err != nil {
-// 		golog.Fatal(err.Error())
-// 	}
-// 	golog.Info("-- Leaving FindAll")
-// 	return res
-// }
-
-// func (e *ExperimentService) FindOne(id string) *models.ExperimentModel {
-
-// 	golog.Info("-- Entering FindOne with id: ", id)
-
-// 	clt := mongodb.GetDefaultMongoClientPanic()
-
-// 	oid, err := primitive.ObjectIDFromHex(id)
-// 	if err != nil {
-// 		golog.Error(err.Error())
-// 		return nil
-// 	}
-// 	experiment_collection := clt.GetCollection("Experiment")
-// 	result := experiment_collection.FindOne(context.Background(), bson.M{"_id": oid})
-// 	if result == nil {
-// 		golog.Fatal("Error getting document")
-// 		return nil
-// 	}
-// 	res := &models.ExperimentModel{}
-// 	result.Decode(res)
-// 	golog.Info("-- Leaving FindOne")
-
-// 	return res
-// }
-
-// func (e *ExperimentService) DeleteOne(id string) error {
-// 	golog.Info("-- Entering DeleteOne with id: ", id)
-
-// 	clt := mongodb.GetDefaultMongoClientPanic()
-
-// 	oid, err := primitive.ObjectIDFromHex(id)
-// 	if err != nil {
-// 		golog.Error(err.Error())
-// 		return err
-// 	}
-// 	experiment_collection := clt.GetCollection("Experiment")
-
-// 	result, err := experiment_collection.DeleteOne(context.Background(), bson.M{"_id": oid})
-// 	if err != nil {
-// 		golog.Error(err.Error())
-
-// 		return err
-// 	}
-
-// 	golog.Info(result)
-// 	return nil
-// }

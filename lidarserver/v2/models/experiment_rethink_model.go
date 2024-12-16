@@ -2,6 +2,9 @@ package models
 
 import "time"
 
+// ExperimentModel represents an experiment in the system.
+// It contains fields for the experiment's ID, title, comments, start time, spatial resolution, accumulation time, data, data acquisition, and molecular data.
+// The fields are tagged with the "rethinkdb" and "json" tags to specify the field names in the database and JSON responses.
 type ExperimentModel struct {
 	ID            string             `rethinkdb:"id,omitempty" json:"id"`
 	Title         string             `rethinkdb:"title" json:"title"`
